@@ -22,10 +22,17 @@
 #define GREEN0 0x009C00
 #define RED 0xFF0000
 
+typedef enum {
+	MENU_MAIN,
+	MENU_A,
+	MENU_B,
+} GameState;
+
 typedef struct GameData {
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	SDL_Texture *texture;
+	GameState state;
 	TTF_Font* font;
 	float fps;
 } GameData;
@@ -35,10 +42,10 @@ typedef struct Button {
 	SDL_Surface* surface;
 	SDL_Rect rect;
 	unsigned long hex_bgcolor, hex_fontcolor, hex_currcolor;
-	void (*function)(); // Callback function
+	void (*function)(GameData* gd); // Callback function
 } Button;
 
-GameData* newGameData();
+GameData* initGameData();
 Button newButton(int x, int y, int w, int h,
 				unsigned long hex_bgcolor,
 				const char* text, 
@@ -54,6 +61,6 @@ void GFX_RenderButton(Button* btn, GameData* gd);
 void GFX_RenderText(int x, int y, int w, int h, char* text, unsigned long hex_color, GameData* gd);
 void GFX_RenderPresent(GameData* self);
 
-void btnHandleEvents(Button* self, SDL_Event* event);
+void btnHandleEvents(Button* self, SDL_Event* e, GameData* gd);
 
 #endif // GAME_H

@@ -2,10 +2,22 @@
 #define MENU_H
 #include "game.h"
 
-Button* initMenu(size_t num_btns, int nrows, int ncols, int rgap, int cgap);
-void menuRender(Button* buttons, size_t num_btns, GameData* gd);
-void menuHandle(Button* buttons, size_t num_btns, SDL_Event* event, GameData* gd);
+Button* initMenu(int x, int y, int w, int h,
+		int nrows, int ncols, 
+		int rgap, int cgap, 
+		const char* text[], int colors[], void* func[],
+		size_t num_btns);
 
+void gotoMainMenu(GameData* gd);
 
+void menuRender(Button* menu, size_t num_btns, GameData* gd);
+void menuHandle(Button* menu, size_t num_btns, SDL_Event* event, GameData* gd);
+
+void funcA(GameData* gd);
+void funcB();
+void funcC();
+void funcD();
+void funcE();
+void funcF();
 
 #endif // MENU_H

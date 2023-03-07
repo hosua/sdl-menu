@@ -8,7 +8,7 @@ SDL_Color hexToColor(unsigned long hex_color){
 	return color;
 }
 
-GameData* newGameData(){
+GameData* initGameData(){
 	GameData* gd = (GameData*) malloc(sizeof(GameData));
 	gd->window = SDL_CreateWindow("Menu Test",
 			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -23,6 +23,7 @@ GameData* newGameData(){
 
 	gd->renderer = SDL_CreateRenderer(gd->window, -1, SDL_RENDERER_ACCELERATED);
 	gd->texture = NULL;
+	gd->state = MENU_MAIN;
 
 	TTF_Init();
 	gd->font = TTF_OpenFont(FONT_FILE, FONT_SIZE);
@@ -71,7 +72,7 @@ Button newButton(int x, int y, int w, int h,
 	return b;
 }
 
-void btnHandleEvents(Button* self, SDL_Event* e){
+void btnHandleEvents(Button* self, SDL_Event* e, GameData* gd){
 	SDL_Rect rect = {
 		.x = self->rect.x, .y = self->rect.y,
 		.w = self->rect.w, .h = self->rect.h,
@@ -99,7 +100,7 @@ void btnHandleEvents(Button* self, SDL_Event* e){
 	if (inside){
 		self->hex_currcolor = GREEN0;
 		if (e->type == SDL_MOUSEBUTTONDOWN && self->function)
-			self->function();
+			self->function(gd);
 	} else {
 		self->hex_currcolor = self->hex_bgcolor;
 	}
