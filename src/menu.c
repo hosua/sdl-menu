@@ -4,27 +4,28 @@ void funcA(GameData* gd){
 	printf("Running function A\n");
 	gd->state = MENU_A;
 }
-void funcB(){
+void funcB(GameData* gd){
 	printf("Running function B\n");
+	gd->state = PLAY;
 }
-void funcC(){
+void funcC(GameData* gd){
 	printf("Running function C\n");
 }
-void funcD(){
+void quitGame(GameData* gd){
 	printf("Running function D\n");
+	gd->state = QUIT;
 }
-void funcE(){
-	printf("Running function E\n");
-}
-void funcF(){
-	printf("Running function F\n");
+
+void resumeGame(GameData* gd){
+	printf("Resuming game\n");
+	gd->state = PLAY;
 }
 
 void gotoMainMenu(GameData* gd){
 	gd->state = MENU_MAIN;	
 }
 
-Button* initMenu(int x, int y, int w, int h,
+Button* newMenu(int x, int y, int w, int h,
 		int nrows, int ncols, 
 		int rgap, int cgap, 
 		const char* text[], int colors[], void* func[],
@@ -49,7 +50,7 @@ Button* initMenu(int x, int y, int w, int h,
 
 void menuRender(Button* menu, size_t num_btns, GameData* gd){
 	for (int i = 0; i < num_btns; i++)
-		GFX_RenderButton(&menu[i], gd);
+		btnRender(&menu[i], gd);
 }
 
 void menuHandle(Button* menu, size_t num_btns, SDL_Event* event, GameData* gd){

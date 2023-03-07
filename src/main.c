@@ -1,23 +1,23 @@
-#include "game.h"
+#include "graphics.h"
 #include "menu.h"
+#include "game.h"
 
 GameData* gd = NULL;
 
-const char* mainMenuText[6] = {
-	"Button A","Button B","Button C", 
-	"Button D","Button E","Button F", 
-};
-int mainMenuColors[6] = {
-	RED, SKY_BLUE, BLUE,
-	GREEN, WHITE, RED,
-};
-void* mainMenuFuncs[6] = {funcA, funcB, funcC, funcD, funcE, funcF};
-size_t n_btns_main = 6;
+size_t n_btns_main = 4;
+const char* mainMenuText[] = {"Button A","Play Game","Button C","Quit Game"};
+int mainMenuColors[] = {WHITE, WHITE, WHITE, WHITE};
+void* mainMenuFuncs[] = {funcA, funcB, funcC, quitGame};
 
-const char* menuAText[] = { "Option A", "Back" };
-int menuAColors[] = {GREEN, RED};
-void* menuAFuncs[] = {NULL, gotoMainMenu};
 size_t n_btns_a = 2;
+const char* menuAText[] = { "Option A", "Back" };
+int menuAColors[] = {WHITE, WHITE};
+void* menuAFuncs[] = {NULL, gotoMainMenu};
+
+size_t n_btns_pause = 3;
+const char* menuPauseText[] = { "Resume", "Main Menu", "Quit" };
+int menuPauseColors[] = {WHITE,WHITE,WHITE};
+void* menuPauseFuncs[] = {resumeGame,gotoMainMenu,quitGame};
 
 
 int main(){
@@ -26,52 +26,85 @@ int main(){
 		fprintf(stderr, "Error initializing SDL: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
-	Button* mainMenu = initMenu(150, 150, 200, 100, 
-								3, 2, 
-								10, 20, 
+	Button* mainMenu = newMenu(150, 150, 200, 100, 
+								2, 2, 
+								10, 10, 
 								mainMenuText, mainMenuColors, mainMenuFuncs,
 								n_btns_main);
 
-	Button* menuA = initMenu(150, 150, 200, 100, 
+	Button* menuA = newMenu(150, 150, 200, 100, 
 								1, 2, 
-								10, 20, 
+								10, 10, 
 								menuAText, menuAColors, menuAFuncs,
-								n_btns_main);
+								n_btns_a);
+
+	Button* pauseMenu = newMenu(150,150,200,100,
+								2,2,
+								10,10,
+								menuPauseText, menuPauseColors, menuPauseFuncs,
+								n_btns_pause);
 	gd = initGameData();
 	// Button b = newButton(150, 25, 200, 100, SKY_BLUE, "Press me", WHITE, 0, buttonAction);
-	// game loop
+	
+	// Main menu loop
 	while (running){
 		SDL_Event event;
-		while (SDL_PollEvent(&event)){
-			// btnHandleEvents(&b, &event);
-			switch(gd->state){
-				case MENU_MAIN:
-					menuHandle(mainMenu, n_btns_main, &event, gd);
-					break;
-				case MENU_A:
-					menuHandle(menuA, n_btns_a, &event, gd);
-					break;
-				case MENU_B:
-					break;
-			}
-
-			if (event.type == SDL_QUIT || 
-					(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
-				running = false;
-		}
-		GFX_Render(gd);
 		switch(gd->state){
 			case MENU_MAIN:
+				GFX_ClearScreen(gd, BLACK);
+				while (SDL_PollEvent(&event)){
+					menuHandle(mainMenu, n_btns_main, &event, gd);
+					if (event.type == SDL_QUIT || 
+							(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
+						running = false;
+				}
 				menuRender(mainMenu, n_btns_main, gd);
+				GFX_RenderPresent(gd);
 				break;
 			case MENU_A:
+				GFX_ClearScreen(gd, BLACK);
+				while (SDL_PollEvent(&event)){
+					menuHandle(menuA, n_btns_a, &event, gd);
+					if (event.type == SDL_QUIT || 
+							(event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE))
+						running = false;
+				}
 				menuRender(menuA, n_btns_a, gd);
+				GFX_RenderPresent(gd);
 				break;
 			case MENU_B:
 				break;
+			case PLAY:
+			{
+				// Gameplay code goes here
+				Player* player = newPlayer(PLAYER_MAX_HP, PLAYER_VEL, 25, 25, PLAYER_W, PLAYER_H);
+				SDL_bool ingame = SDL_TRUE;
+				SDL_bool paused = SDL_FALSE;
+				while (ingame){ // Game loop
+					GFX_ClearScreen(gd, BLACK);
+					paused = (gd->state == PAUSED) ? SDL_TRUE : SDL_FALSE;
+					if (gd->state == MENU_MAIN || gd->state == QUIT){
+						free(player);
+						break;
+					}
+					if (!paused){ // playing
+						while (SDL_PollEvent(&event))
+							playerHandle(player, &event, gd);
+					} else { // paused
+						while (SDL_PollEvent(&event))
+							menuHandle(pauseMenu, n_btns_pause, &event, gd);
+						menuRender(pauseMenu, n_btns_pause, gd);
+					}
+					playerRender(player, gd);
+					GFX_RenderPresent(gd);
+					if (!running)
+						break;
+				} // end game loop
+				break;
+			}
+			case QUIT: default:
+				running = false;
+				break;
 		}
-		// GFX_RenderButton(&b, gd);
-		// GFX_RenderText(game_data, 5, 5, 100, 100, "Hello world", WHITE);
-		GFX_RenderPresent(gd);
 	}
 }
