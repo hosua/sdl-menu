@@ -66,13 +66,15 @@ Button newButton(int x, int y, int w, int h,
 				unsigned long hex_fontcolor,
 				int params, void(*function)());
 
-SDL_Surface *initText(char* text, int font_size, int font_hex_color, int params);
 SDL_Color hexToColor(unsigned long hex_color);
 
-void GFX_ClearScreen(GameData* gd, unsigned long hex_color);
-void GFX_RenderText(int x, int y, int w, int h, char* text, unsigned long hex_color, GameData* gd);
-void GFX_RenderPresent(GameData* self);
+TTF_Font* newFont(const char* font_file, size_t font_size);
 
+void GFX_ClearScreen(GameData* gd, unsigned long hex_color);
+void GFX_RenderPresent(GameData* self);
+void GFX_RenderText(int x, int y, int w, int h, 
+		char* text, unsigned long hex_color, 
+		TTF_Font* font, GameData* gd);
 void btnRender(Button* btn, GameData* gd);
 void btnHandleEvents(Button* self, SDL_Event* e, GameData* gd);
 

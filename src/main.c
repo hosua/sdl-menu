@@ -2,6 +2,9 @@
 #include "menu.h"
 #include "game.h"
 
+#define MENU_X 150
+#define MENU_Y 150
+
 GameData* gd = NULL;
 
 size_t n_btns_main = 4;
@@ -16,26 +19,27 @@ size_t n_btns_pause = 3;
 const char* menuPauseText[] = { "Resume", "Main Menu", "Quit" };
 void* menuPauseFuncs[] = {resumeGame,gotoMainMenu,quitGame};
 
-
 int main(){
+	TTF_Font* title_font = newFont(FONT_FILE, 50);
+
 	bool running = true;
 	if (SDL_Init(SDL_INIT_EVERYTHING)){
 		fprintf(stderr, "Error initializing SDL: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
-	Button* mainMenu = newMenu(150, 150, 200, 100, 
+	Button* mainMenu = newMenu(MENU_X, MENU_Y, 200, 100, 
 								2, 2, 
 								10, 10, 
 								WHITE, mainMenuText, mainMenuFuncs,
 								n_btns_main);
 
-	Button* menuA = newMenu(150, 150, 200, 100, 
+	Button* menuA = newMenu(MENU_X, MENU_Y, 200, 100, 
 								1, 2, 
 								10, 10, 
 								WHITE, menuAText, menuAFuncs,
 								n_btns_a);
 
-	Button* pauseMenu = newMenu(150,150,200,100,
+	Button* pauseMenu = newMenu(MENU_X,MENU_Y,200,100,
 								2,2,
 								10,10,
 								WHITE, menuPauseText, menuPauseFuncs,
@@ -49,6 +53,9 @@ int main(){
 		switch(gd->state){
 			case MENU_MAIN:
 				GFX_ClearScreen(gd, BLACK);
+				GFX_RenderText(MENU_X+50, 10, 200, 100,
+						"Insert Title Here", WHITE,
+						title_font, gd);
 				while (SDL_PollEvent(&event)){
 					menuHandle(mainMenu, n_btns_main, &event, gd);
 					if (event.type == SDL_QUIT || 

@@ -24,14 +24,7 @@ GameData* initGameData(){
 	gd->renderer = SDL_CreateRenderer(gd->window, -1, SDL_RENDERER_ACCELERATED);
 	gd->texture = NULL;
 	gd->state = MENU_MAIN;
-
-	TTF_Init();
-	gd->font = TTF_OpenFont(FONT_FILE, FONT_SIZE);
-	if (!gd->font){
-		fprintf(stderr, "Error: Font file \"%s\" not found\n", FONT_FILE);
-		exit(EXIT_FAILURE);
-	}
-
+	gd->font = newFont(FONT_FILE, FONT_SIZE);
 	// Allow window to be resizable
 	SDL_SetWindowResizable(gd->window, SDL_TRUE);
 	// Allows for transparent rendering
@@ -113,15 +106,25 @@ void btnRender(Button* b, GameData* gd){
 	SDL_SetRenderDrawColor(gd->renderer, bgc.r, bgc.g, bgc.b, 255);
 	SDL_RenderFillRect(gd->renderer, &rect);
 	SDL_SetRenderDrawColor(gd->renderer, fontc.r, fontc.g, fontc.b, 255);
-	GFX_RenderText((rect.x + (0.25f)*rect.w), (rect.y + (0.25f)*rect.h), rect.w, rect.h, b->text, 0, gd);
+	GFX_RenderText((rect.x + (0.25f)*rect.w), (rect.y + (0.25f)*rect.h), rect.w, rect.h, b->text, BLACK, gd->font, gd);
 }
 
-void GFX_RenderText(int x, int y, int w, int h, char* text, unsigned long hex_color, GameData* gd){
+TTF_Font* newFont(const char* font_file, size_t font_size){
+	TTF_Init();
+	TTF_Font* font = TTF_OpenFont(font_file, font_size);
+	if (!font){
+		fprintf(stderr, "Error: Font file \"%s\" not found\n", font_file);
+		exit(EXIT_FAILURE);
+	}
+	return font;
+}
+
+void GFX_RenderText(int x, int y, int w, int h, char* text, unsigned long hex_color, TTF_Font* font, GameData* gd){
 	SDL_Rect rect;
 	SDL_Surface *surface = NULL;
 	SDL_Color color = hexToColor(hex_color);
 	SDL_SetRenderDrawColor(gd->renderer, color.r, color.g, color.b, color.a);
-	surface = TTF_RenderText_Solid(gd->font, text, color);
+	surface = TTF_RenderText_Solid(font, text, color);
 	gd->texture = SDL_CreateTextureFromSurface(gd->renderer, surface);
 	w = surface->w;
 	h = surface->h;
