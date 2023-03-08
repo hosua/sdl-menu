@@ -1,2 +1,4 @@
-objs/
-menu
+menu_c/objs/
+menu_c/menu
+menu_c++/objs/
+menu_c++/menu
