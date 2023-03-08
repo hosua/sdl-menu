@@ -1,4 +1,6 @@
+menu_c/build/
 menu_c/objs/
 menu_c/menu
 menu_c++/objs/
+menu_c++/build/
 menu_c++/menu
