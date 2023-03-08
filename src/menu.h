@@ -5,7 +5,7 @@
 Button* newMenu(int x, int y, int w, int h,
 		int nrows, int ncols, 
 		int rgap, int cgap, 
-		const char* text[], int colors[], void* func[],
+		unsigned long hex_color, const char* text[], void* func[],
 		size_t num_btns);
 
 void gotoMainMenu(GameData* gd);

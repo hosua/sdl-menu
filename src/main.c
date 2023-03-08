@@ -6,17 +6,14 @@ GameData* gd = NULL;
 
 size_t n_btns_main = 4;
 const char* mainMenuText[] = {"Button A","Play Game","Button C","Quit Game"};
-int mainMenuColors[] = {WHITE, WHITE, WHITE, WHITE};
 void* mainMenuFuncs[] = {funcA, funcB, funcC, quitGame};
 
 size_t n_btns_a = 2;
 const char* menuAText[] = { "Option A", "Back" };
-int menuAColors[] = {WHITE, WHITE};
 void* menuAFuncs[] = {NULL, gotoMainMenu};
 
 size_t n_btns_pause = 3;
 const char* menuPauseText[] = { "Resume", "Main Menu", "Quit" };
-int menuPauseColors[] = {WHITE,WHITE,WHITE};
 void* menuPauseFuncs[] = {resumeGame,gotoMainMenu,quitGame};
 
 
@@ -29,19 +26,19 @@ int main(){
 	Button* mainMenu = newMenu(150, 150, 200, 100, 
 								2, 2, 
 								10, 10, 
-								mainMenuText, mainMenuColors, mainMenuFuncs,
+								WHITE, mainMenuText, mainMenuFuncs,
 								n_btns_main);
 
 	Button* menuA = newMenu(150, 150, 200, 100, 
 								1, 2, 
 								10, 10, 
-								menuAText, menuAColors, menuAFuncs,
+								WHITE, menuAText, menuAFuncs,
 								n_btns_a);
 
 	Button* pauseMenu = newMenu(150,150,200,100,
 								2,2,
 								10,10,
-								menuPauseText, menuPauseColors, menuPauseFuncs,
+								WHITE, menuPauseText, menuPauseFuncs,
 								n_btns_pause);
 	gd = initGameData();
 	// Button b = newButton(150, 25, 200, 100, SKY_BLUE, "Press me", WHITE, 0, buttonAction);

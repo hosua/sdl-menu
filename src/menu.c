@@ -28,14 +28,14 @@ void gotoMainMenu(GameData* gd){
 Button* newMenu(int x, int y, int w, int h,
 		int nrows, int ncols, 
 		int rgap, int cgap, 
-		const char* text[], int colors[], void* func[],
+		unsigned long hex_color, const char* text[], void* func[],
 		size_t num_btns){
 
 	int y_start = y;
 	int r = 0;
 	Button* buttons = (Button*)malloc(sizeof(Button)*num_btns);
 	for (int i = 0; i < num_btns; i++){
-		buttons[i] = newButton(x, y, w, h, colors[i], text[i], WHITE, 0, func[i]);
+		buttons[i] = newButton(x, y, w, h, hex_color, text[i], WHITE, 0, func[i]);
 		r++;
 		if (r == nrows){
 			r = 0;

@@ -45,5 +45,4 @@ void playerHandle(Player* self, SDL_Event* event, GameData* gd){
 			}
 			break;
 	}
-
 }

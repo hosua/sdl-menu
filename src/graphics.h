@@ -31,7 +31,7 @@
 #define PLAYER_W 20
 #define PLAYER_H 30
 #define PLAYER_MAX_HP 100
-#define PLAYER_VEL 5
+#define PLAYER_VEL PLAYER_W
 
 typedef enum {
 	QUIT,
