@@ -8,11 +8,11 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
+#include <functional>
+#include <memory>
 
 #define SCREEN_W 800
 #define SCREEN_H 600
-#define FONT_FILE "fonts/pixel-letters.ttf"
-#define FONT_SIZE 30
 #define FPS 60
 
 #define WHITE 0xFFFFFF
@@ -26,13 +26,19 @@
 #define RED 0xFF0000
 #define PURPLE 0x640A6E
 
+using std::cout;
 using std::string;
 using std::vector;
+using std::unique_ptr;
+using std::shared_ptr;
 
 // Game states for the state machine
 typedef enum {
 	GAME_QUIT,
 	GAME_MAINMENU,
+	GAME_SETTINGS,
+	GAME_LEVELSELECT,
+	GAME_PLAY,
 } GameState;
 
 /* GameMaster class is a singleton, it can and should only be instantiated once.
@@ -57,6 +63,14 @@ public:
 	void addFont(string font_file, size_t font_size);
 
 	void handleInput(SDL_Event e);
+
+	void renderClear(unsigned long hex_color=BLACK);
+	// renderPresent() must be called after rendering in the current frame is complete
+	void renderPresent();
+	// render text to screen
+	void renderText(int x, int y, 
+					string text, unsigned long hex_color=BLACK, size_t font_idx=0,
+					int w=25, int h=25);
 
 private:
 	// Private constructor to prevent new operator from being used outside of init()

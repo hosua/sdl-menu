@@ -1,31 +1,7 @@
 #include "game.h"
 
-TTF_Font* initFont(string font_file, size_t font_size){
-	TTF_Font* font = TTF_OpenFont(font_file.c_str(), font_size);
-	if (!font) 
-		std::cerr << "Error: Font file: " << font_file << " was not found.\n";	
-	return font;
-}
-
-SDL_Color convertHexColor(unsigned long hex_color, uint8_t opacity){
-	uint8_t r = ((hex_color >> 16) & 0xFF);
-	uint8_t g = ((hex_color >> 8) & 0xFF);
-	uint8_t b = ((hex_color) & 0xFF);
-	uint8_t a = opacity;
-	return SDL_Color { .r=r, .g=g, .b=b, .a=a };
-}
-
 // Set instance as NULL so we can tell that it has not been instantiated
 GameMaster* GameMaster::_instance = nullptr;
-
-GameMaster* GameMaster::init(){
-	// Only instantiate GameMaster if we haven't already
-	if (_instance == nullptr)
-		_instance = new GameMaster();
-	else
-		std::cerr << "Warning: GameMaster was not initialized because an instance of it already exists.\n";
-	return _instance;
-}
 
 // All SDL initialization happens in the GameMaster constructor
 GameMaster::GameMaster(): _texture(nullptr), _state(GAME_MAINMENU), _is_running(true) {
@@ -56,6 +32,15 @@ GameMaster::GameMaster(): _texture(nullptr), _state(GAME_MAINMENU), _is_running(
 	// SDL_RenderSetLogicalSize(gd->renderer, SCREEN_W, SCREEN_H);
 }
 
+GameMaster* GameMaster::init(){
+	// Only instantiate GameMaster if we haven't already
+	if (_instance == nullptr)
+		_instance = new GameMaster();
+	else
+		std::cerr << "Warning: GameMaster was not initialized because an instance of it already exists.\n";
+	return _instance;
+}
+
 void GameMaster::addFont(string font_file, size_t font_size){
 	_fonts.push_back(initFont(font_file, font_size));	
 }
@@ -67,4 +52,48 @@ void GameMaster::handleInput(SDL_Event e){
 		_is_running = false;
 		_state = GAME_QUIT;
 	}
+}
+
+void GameMaster::renderClear(unsigned long hex_color){
+	SDL_Color col = convertHexColor(hex_color, 0xFF);
+	SDL_SetRenderDrawColor(_renderer, col.r, col.g, col.b, col.a);
+	SDL_RenderClear(_renderer);
+}
+void GameMaster::renderPresent(){
+	SDL_RenderPresent(_renderer);
+}
+void GameMaster::renderText(int x, int y, 
+				string text, unsigned long hex_color, size_t font_idx,
+				int w, int h){
+	assert(font_idx < _fonts.size() && "Error: Font index exceeds number of available fonts!");
+	SDL_Rect rect;
+	SDL_Surface *surface = nullptr;
+	SDL_Color color = convertHexColor(hex_color);
+	SDL_SetRenderDrawColor(_renderer, color.r, color.g, color.b, color.a);
+	surface = TTF_RenderText_Solid(_fonts[font_idx], text.c_str(), color);
+	_texture = SDL_CreateTextureFromSurface(_renderer, surface);
+	w = surface->w;
+	h = surface->h;
+	rect.x = x;
+	rect.y = y;
+	rect.w = w;
+	rect.h = h;
+	SDL_FreeSurface(surface);
+	SDL_RenderCopy(_renderer, _texture, nullptr, &rect);
+	SDL_DestroyTexture(_texture);
+}
+
+TTF_Font* initFont(string font_file, size_t font_size){
+	TTF_Font* font = TTF_OpenFont(font_file.c_str(), font_size);
+	if (!font) 
+		std::cerr << "Error: Font file: " << font_file << " was not found.\n";	
+	return font;
+}
+
+SDL_Color convertHexColor(unsigned long hex_color, uint8_t opacity){
+	uint8_t r = ((hex_color >> 16) & 0xFF);
+	uint8_t g = ((hex_color >> 8) & 0xFF);
+	uint8_t b = ((hex_color) & 0xFF);
+	uint8_t a = opacity;
+	return SDL_Color { .r=r, .g=g, .b=b, .a=a };
 }
