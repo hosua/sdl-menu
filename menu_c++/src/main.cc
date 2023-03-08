@@ -4,13 +4,13 @@
 vector<size_t> font_sizes = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
 const char* ttf_pixel_letters = "fonts/pixel-letters.ttf";
 
-void startGame(GameMaster* gm){ gm->_state = GAME_PLAY; }
-void goSettings(GameMaster* gm){ gm->_state = GAME_SETTINGS; }
-void goLevelSelect(GameMaster* gm){ gm->_state = GAME_LEVELSELECT; }
-void quitGame(GameMaster* gm){ gm->_state = GAME_QUIT; }
+void startGame(shared_ptr<GameMaster> gm){ gm->_state = GAME_PLAY; }
+void goSettings(shared_ptr<GameMaster> gm){ gm->_state = GAME_SETTINGS; }
+void goLevelSelect(shared_ptr<GameMaster> gm){ gm->_state = GAME_LEVELSELECT; }
+void quitGame(shared_ptr<GameMaster> gm){ gm->_state = GAME_QUIT; }
 
 int main(){
-	GameMaster* gm = GameMaster::init();
+	shared_ptr<GameMaster> gm = shared_ptr<GameMaster>(GameMaster::init());
 	
 	// Create some fonts and store them in GameMaster object
 	for (size_t sz : font_sizes)
@@ -19,14 +19,16 @@ int main(){
 	vector<string> main_menu_text = {"Play", "Level Select", "Settings", "Quit"};
 	vector<func_t> main_menu_funcs = {startGame, goLevelSelect, goSettings, quitGame};
 
-	unique_ptr<Menu> main_menu(new Menu(4, main_menu_text, main_menu_funcs,
-			150, 150, 150, 50,	
+	unique_ptr<Menu> main_menu(new Menu(main_menu_text, main_menu_funcs,
+			SCREEN_W/2, SCREEN_H/2, 150, 50,	
 			2,
 			10, 10,
 			0.10f, 0.10f,
 			2,
 			WHITE, BLACK)
 	);
+
+	main_menu->setBackground(SKY_BLUE, 25);
 
 
 	while (gm->_is_running){

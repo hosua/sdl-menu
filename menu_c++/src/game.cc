@@ -12,7 +12,8 @@ GameMaster::GameMaster(): _texture(nullptr), _state(GAME_MAINMENU), _is_running(
 	_window = SDL_CreateWindow("Menu Test",
 			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 			SCREEN_W, SCREEN_H,
-			SDL_WINDOW_RESIZABLE);
+			SDL_WINDOW_RESIZABLE
+		);
 
 	if (!_window){
 		fprintf(stderr, "Fatal Error: Window failed to initialize\n");
